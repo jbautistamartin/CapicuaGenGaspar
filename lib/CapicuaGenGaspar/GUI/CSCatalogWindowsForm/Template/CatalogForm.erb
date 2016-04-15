@@ -1,0 +1,320 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Windows.Forms;
+<%=get_namespaces_text(:business_interfaces)
+%><%=get_namespaces_text(:business_entities)
+%><%=get_namespaces_text(:data_access)
+%>
+
+namespace <%=generation_attributes[:namespace]%>
+{
+	partial class <%=template_target.class_name%>
+	{
+        #region Propiedades
+
+        /// <summary>
+        /// Acceso a datos
+        /// </summary>
+        protected <%=get_entity_data_access_full_name(template_target.entity_schema.name)%><<%=get_entity_name(template_target.entity_schema.name)%>> accesoDatos<%=template_target.entity_schema.name%>=new <%=get_entity_data_access_full_name(template_target.entity_schema.name)%><<%=get_entity_name(template_target.entity_schema.name)%>>();
+
+        /// <summary>
+        /// Estado Actual del catalogo
+        /// </summary>
+        protected EstadosCatalogo estadoCatalogo = EstadosCatalogo.Vista;
+
+        #endregion Propiedades
+
+        #region Contructor
+
+        public <%=template_target.class_name%>()
+        {
+            InitializeComponent();
+        }
+
+        #endregion Contructor
+
+        #region Eventos
+
+        protected virtual void <%=template_target.class_name%>_Load(object sender, EventArgs e)
+        {
+            //Cargo el estado inicial
+            CambiarEstado(EstadosCatalogo.Vista);
+        }
+
+        protected virtual void btnAgregar_Click(object sender, EventArgs e)
+        {
+            CambiarEstado(EstadosCatalogo.Nuevo);
+        }
+
+        protected virtual void btnEditar_Click(object sender, EventArgs e)
+        {
+            CambiarEstado(EstadosCatalogo.Edicion);
+        }
+
+        protected virtual void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (this.bindingSource.Current == null) return;
+            Borrar();
+        }
+
+        protected virtual void btnAceptar_Click(object sender, EventArgs e)
+        {
+            switch (this.estadoCatalogo)
+            {
+                case EstadosCatalogo.Nuevo:
+                    Agregar();
+                    break;
+
+                case EstadosCatalogo.Edicion:
+                    Actualizar();
+                    break;
+            }
+        }
+
+        protected virtual void btnCancelar_Click(object sender, EventArgs e)
+        {
+            CambiarEstado(EstadosCatalogo.Vista);
+        }
+
+        protected virtual void btnSalir_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        protected virtual void bindingSource_CurrentChanged(object sender, EventArgs e)
+        {
+            if (this.bindingSource.Current != null)
+            {
+                <%=get_entity_full_name(template_target.entity_schema.name)%> registroBusqueda = this.bindingSource.Current as <%=get_entity_full_name(template_target.entity_schema.name)%>;
+
+                if (registroBusqueda == null)
+                {
+                    return;
+                }
+                else
+                {
+                    MostrarRegistro(registroBusqueda);
+                }
+            }
+        }
+
+        #endregion Eventos
+
+        #region Metodos
+
+        /// <summary>
+        /// Carga la lista de compomentes completa
+        /// </summary>
+        protected virtual void CargarLista()
+        {
+            bindingSource.DataSource = accesoDatos<%=template_target.entity_schema.name%>.Listar();
+            dgvListado.AutoGenerateColumns = true;
+            dgvListado.DataSource = bindingSource;
+        }
+
+        /// <summary>
+        /// Agrego el registro
+        /// </summary>
+        protected virtual void Agregar()
+        {
+            try
+            {
+                if (!ValidarNulos()) return;
+                <%=get_entity_full_name(template_target.entity_schema.name)%> registro = ObtenerRegistro();
+                accesoDatos<%=template_target.entity_schema.name%>.Insertar(registro);
+                MessageBox.Show("Inserción completada", "Operación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CambiarEstado(EstadosCatalogo.Vista);
+            }
+            catch (Exception ex)
+            {
+                ControlExcepciones.MostrarExcepcion(ex);
+            }
+        }
+
+        /// <summary>
+        /// Actualizo el registro
+        /// </summary>
+        protected virtual void Actualizar()
+        {
+            try
+            {
+                if (!ValidarNulos()) return;
+                <%=get_entity_full_name(template_target.entity_schema.name)%> registro = ObtenerRegistro();
+                accesoDatos<%=template_target.entity_schema.name%>.Actualizar(registro);
+                MessageBox.Show("Actualización completada", "Operación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CambiarEstado(EstadosCatalogo.Vista);
+            }
+            catch (Exception ex)
+            {
+                ControlExcepciones.MostrarExcepcion(ex);
+            }
+        }
+
+        /// <summary>
+        /// Borro el registro
+        /// </summary>
+        protected virtual void Borrar()
+        {
+            try
+            {
+                <%=get_entity_full_name(template_target.entity_schema.name)%> registroBusqueda = ObtenerRegistro();
+                accesoDatos<%=template_target.entity_schema.name%>.Eliminar(registroBusqueda);
+                MessageBox.Show("Borrado completo", "Operación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CambiarEstado(EstadosCatalogo.Vista);
+            }
+            catch (Exception ex)
+            {
+                ControlExcepciones.MostrarExcepcion(ex);
+            }
+        }
+
+        /// <summary>
+        ///     Estado actual del catalogo.
+        /// </summary>
+        /// <param name="estado">El estado</param>
+        protected virtual void CambiarEstado(EstadosCatalogo estado)
+        {
+            switch (estado)
+            {
+                case EstadosCatalogo.Vista:
+
+                    //Configuro los campos
+					<%
+					template_target.entity_schema.fields.each { |field|
+					%>this.txt<%=field.name%>.Text = "";
+					this.txt<%=field.name%>.Enabled = false;
+					<%}%>
+
+					//Configuro el datagrid
+                    dgvListado.Enabled = true;
+
+                    //Configuro los botonos
+                    btnAgregar.Enabled = true;
+                    btnEditar.Enabled = true;
+                    btnEliminar.Enabled = true;
+                    btnAceptar.Enabled = false;
+                    btnCancelar.Enabled = false;
+                    btnSalir.Enabled = true;
+
+                    //Cargo el listado
+                    CargarLista();
+
+                    break;
+
+                case EstadosCatalogo.Nuevo:
+
+					//Configuro los campos
+					<%
+					template_target.entity_schema.fields.each { |field|
+					%>this.txt<%=field.name%>.Text = "";
+                    <%next if field.identity%>this.txt<%=field.name%>.Enabled = true;
+					<%}%>
+
+                    //Configuro el datagrid
+                    dgvListado.Enabled = false;
+
+                    //Configuro los botonos
+                    btnAgregar.Enabled = false;
+                    btnEditar.Enabled = false;
+                    btnEliminar.Enabled = false;
+                    btnAceptar.Enabled = true;
+                    btnCancelar.Enabled = true;
+                    btnSalir.Enabled = false;
+
+                    break;
+
+                case EstadosCatalogo.Edicion:
+                    if (this.bindingSource.Current == null) return;
+
+					//Configuro los campos
+					<%
+					template_target.entity_schema.fields.each { |field|
+                    next if field.primary_key
+					%>this.txt<%=field.name%>.Enabled = true;
+					<%}%>
+                    //Configuro el datagrid
+                    dgvListado.Enabled = false;
+
+                    //Configuro los botonos
+                    btnAgregar.Enabled = false;
+                    btnEditar.Enabled = false;
+                    btnEliminar.Enabled = false;
+                    btnAceptar.Enabled = true;
+                    btnCancelar.Enabled = true;
+                    btnSalir.Enabled = false;
+                    break;
+
+                default:
+                    break;
+            }
+            this.estadoCatalogo = estado;
+        }
+
+		protected virtual bool ValidarNulos()
+        {
+          <%
+            template_target.entity_schema.fields.each { |field|
+              next if field.allow_null or field.identity
+            %>if (txt<%=field.name%>.Text.Trim() == "")
+            {
+                MessageBox.Show("El campo <%=field.name%> no puede estar vacio", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return false;
+            }
+            <%}%>
+
+            return true;
+        }
+
+        /// <summary>
+        /// Muestra un registro en pantalla
+        /// </summary>
+        /// <param name="tabla1">Registro a mostrar</param>
+        protected virtual void MostrarRegistro(<%=get_entity_full_name(template_target.entity_schema.name)%>  <%=template_target.entity_schema.name%> )
+        {
+             <%
+            template_target.entity_schema.fields.each { |field|
+            %>this.txt<%=field.name%>.Text = String.Format("{0}",<%=template_target.entity_schema.name%>.<%=field.name%>);
+            <%}%>
+        }
+
+        /// <summary>
+        /// Obtiene un registro para su guardado
+        /// </summary>
+        /// <returns>Registro a guardar</returns>
+        protected virtual <%=get_entity_full_name(template_target.entity_schema.name)%> ObtenerRegistro()
+        {
+          	<%=get_entity_full_name(template_target.entity_schema.name)%> <%=template_target.entity_schema.name%>  = new <%=get_entity_full_name(template_target.entity_schema.name)%> ();
+
+            <%
+               template_target.entity_schema.fields.each { |field|
+            %>if (this.txt<%=field.name%>.Text.Trim()!="")  <%=template_target.entity_schema.name%>.<%=field.name%> = <%=field.convert_from_text%>this.txt<%=field.name%>.Text.Trim());
+            <%}%>
+
+            return <%=template_target.entity_schema.name%>;
+        }
+
+        #endregion Metodos
+    }
+}

@@ -1,0 +1,363 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Windows.Forms;
+
+
+namespace <%=generation_attributes[:namespace]%>
+{
+	partial class <%=template_target.class_name%> : Form
+	{
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(<%=template_target.class_name%>));
+            this.btnAgregar = new System.Windows.Forms.Button();
+            this.imageList = new System.Windows.Forms.ImageList(this.components);
+						<%
+            template_target.entity_schema.fields.each { |field|
+            %>this.lbl<%=field.name%> = new System.Windows.Forms.Label();
+            <%
+            }
+            template_target.entity_schema.fields.each { |field|
+            %>this.txt<%=field.name%> = new System.Windows.Forms.TextBox();
+            <%}%>
+            this.grpListado = new System.Windows.Forms.GroupBox();
+            this.dgvListado = new System.Windows.Forms.DataGridView();
+            this.grpDetalle = new System.Windows.Forms.GroupBox();
+            this.pnlDetalle = new System.Windows.Forms.Panel();
+            this.btnEditar = new System.Windows.Forms.Button();
+            this.btnEliminar = new System.Windows.Forms.Button();
+            this.btnAceptar = new System.Windows.Forms.Button();
+            this.btnCancelar = new System.Windows.Forms.Button();
+            this.btnSalir = new System.Windows.Forms.Button();
+            this.grpOperaciones = new System.Windows.Forms.GroupBox();
+            this.grpDatos = new System.Windows.Forms.GroupBox();
+            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.lblTitulo = new System.Windows.Forms.Label();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.grpListado.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvListado)).BeginInit();
+            this.grpDetalle.SuspendLayout();
+            this.pnlDetalle.SuspendLayout();
+            this.grpOperaciones.SuspendLayout();
+            this.grpDatos.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
+            this.SuspendLayout();
+            //
+            // btnAgregar
+            //
+            this.btnAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAgregar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAgregar.ImageKey = "Agregar.png";
+            this.btnAgregar.ImageList = this.imageList;
+            this.btnAgregar.Location = new System.Drawing.Point(234, 19);
+            this.btnAgregar.Name = "btnAgregar";
+            this.btnAgregar.Size = new System.Drawing.Size(82, 77);
+            this.btnAgregar.TabIndex = 25;
+            this.btnAgregar.Text = "Agregar";
+            this.btnAgregar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip.SetToolTip(this.btnAgregar, "Agregar Registro <%=template_target.entity_schema.name%>");
+            this.btnAgregar.UseVisualStyleBackColor = true;
+            this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
+            //
+            // imageList
+            //
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "Agregar.png");
+            this.imageList.Images.SetKeyName(1, "Editar.png");
+            this.imageList.Images.SetKeyName(2, "Eliminar.png");
+            this.imageList.Images.SetKeyName(3, "Aceptar.png");
+            this.imageList.Images.SetKeyName(4, "Cancelar.png");
+            this.imageList.Images.SetKeyName(5, "Salir.png");
+            <%
+            indice = 0
+            template_target.entity_schema.fields.each { |field|
+            y=70
+            alto=35
+            posicion=y + (alto*indice)
+            indice=indice+1
+            %>
+            //
+            // lbl<%=field.name%>
+            //
+            lbl<%=field.name%>.AutoSize = true;
+            lbl<%=field.name%>.Location = new System.Drawing.Point(25, <%=posicion%>);
+            lbl<%=field.name%>.Name = "idLabel";
+            lbl<%=field.name%>.Size = new System.Drawing.Size(18, 13);
+            lbl<%=field.name%>.Text = "<%=field.name%>:";
+						//
+            // txt<%=field.name%>
+            //
+            this.txt<%=field.name%>.Location = new System.Drawing.Point(140, <%=posicion%>);
+            this.txt<%=field.name%>.Name = "idTextBox";
+            this.txt<%=field.name%>.Size = new System.Drawing.Size(232, 20);
+            <%="this.txt#{field.name}.MaxLength = #{field.size};" if field.size and field.size!='0'%>
+						<%}%>
+            //
+            // grpListado
+            //
+            this.grpListado.Controls.Add(this.dgvListado);
+            this.grpListado.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpListado.Location = new System.Drawing.Point(402, 16);
+            this.grpListado.Name = "grpListado";
+            this.grpListado.Size = new System.Drawing.Size(359, 223);
+            this.grpListado.TabIndex = 28;
+            this.grpListado.TabStop = false;
+            this.grpListado.Text = "Listado de \'<%=template_target.entity_schema.name%>\'";
+            //
+            // dgvListado
+            //
+            this.dgvListado.AllowUserToAddRows = false;
+            this.dgvListado.AllowUserToDeleteRows = false;
+            this.dgvListado.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvListado.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvListado.Location = new System.Drawing.Point(3, 16);
+            this.dgvListado.Name = "dgvListado";
+            this.dgvListado.ReadOnly = true;
+            this.dgvListado.Size = new System.Drawing.Size(353, 204);
+            this.dgvListado.TabIndex = 0;
+            //
+            // grpDetalle
+            //
+            this.grpDetalle.Controls.Add(this.pnlDetalle);
+            this.grpDetalle.Dock = System.Windows.Forms.DockStyle.Left;
+            this.grpDetalle.Location = new System.Drawing.Point(3, 16);
+            this.grpDetalle.Name = "grpDetalle";
+            this.grpDetalle.Size = new System.Drawing.Size(399, 223);
+            this.grpDetalle.TabIndex = 29;
+            this.grpDetalle.TabStop = false;
+            this.grpDetalle.Text = "Detalle";
+            //
+            // pnlDetalle
+            //
+            this.pnlDetalle.AutoScroll = true;
+            <%
+               template_target.entity_schema.fields.each { |field|
+            %>this.pnlDetalle.Controls.Add(lbl<%=field.name%>);
+            this.pnlDetalle.Controls.Add(txt<%=field.name%>);
+            <%}%>
+            this.pnlDetalle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlDetalle.Location = new System.Drawing.Point(6, 19);
+            this.pnlDetalle.Name = "pnlDetalle";
+            this.pnlDetalle.Size = new System.Drawing.Size(387, 198);
+            this.pnlDetalle.TabIndex = 0;
+            //
+            // btnEditar
+            //
+            this.btnEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEditar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEditar.ImageKey = "Editar.png";
+            this.btnEditar.ImageList = this.imageList;
+            this.btnEditar.Location = new System.Drawing.Point(322, 19);
+            this.btnEditar.Name = "btnEditar";
+            this.btnEditar.Size = new System.Drawing.Size(82, 77);
+            this.btnEditar.TabIndex = 30;
+            this.btnEditar.Text = "Editar";
+            this.btnEditar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip.SetToolTip(this.btnEditar, "Editar Registro <%=template_target.entity_schema.name%>");
+            this.btnEditar.UseVisualStyleBackColor = true;
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
+            //
+            // btnEliminar
+            //
+            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEliminar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEliminar.ImageIndex = 2;
+            this.btnEliminar.ImageList = this.imageList;
+            this.btnEliminar.Location = new System.Drawing.Point(410, 19);
+            this.btnEliminar.Name = "btnEliminar";
+            this.btnEliminar.Size = new System.Drawing.Size(82, 77);
+            this.btnEliminar.TabIndex = 31;
+            this.btnEliminar.Text = "Eliminar";
+            this.btnEliminar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+						this.toolTip.SetToolTip(this.btnEliminar, "Eliminar Registro <%=template_target.entity_schema.name%>");
+            this.btnEliminar.UseVisualStyleBackColor = true;
+            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
+            //
+            // btnAceptar
+            //
+            this.btnAceptar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAceptar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAceptar.ImageKey = "Aceptar.png";
+            this.btnAceptar.ImageList = this.imageList;
+            this.btnAceptar.Location = new System.Drawing.Point(498, 19);
+            this.btnAceptar.Name = "btnAceptar";
+            this.btnAceptar.Size = new System.Drawing.Size(82, 77);
+            this.btnAceptar.TabIndex = 32;
+            this.btnAceptar.Text = "Aceptar";
+            this.btnAceptar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnAceptar.UseVisualStyleBackColor = true;
+            this.btnAceptar.Click += new System.EventHandler(this.btnAceptar_Click);
+            //
+            // btnCancelar
+            //
+            this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancelar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancelar.ImageKey = "Cancelar.png";
+            this.btnCancelar.ImageList = this.imageList;
+            this.btnCancelar.Location = new System.Drawing.Point(586, 19);
+            this.btnCancelar.Name = "btnCancelar";
+            this.btnCancelar.Size = new System.Drawing.Size(82, 77);
+            this.btnCancelar.TabIndex = 33;
+            this.btnCancelar.Text = "Cancelar";
+            this.btnCancelar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnCancelar.UseVisualStyleBackColor = true;
+            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
+            //
+            // btnSalir
+            //
+            this.btnSalir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSalir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSalir.ImageKey = "Salir.png";
+            this.btnSalir.ImageList = this.imageList;
+            this.btnSalir.Location = new System.Drawing.Point(674, 19);
+            this.btnSalir.Name = "btnSalir";
+            this.btnSalir.Size = new System.Drawing.Size(82, 77);
+            this.btnSalir.TabIndex = 34;
+            this.btnSalir.Text = "Salir";
+            this.btnSalir.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnSalir.UseVisualStyleBackColor = true;
+            this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
+            //
+            // grpOperaciones
+            //
+            this.grpOperaciones.Controls.Add(this.btnAgregar);
+            this.grpOperaciones.Controls.Add(this.btnEditar);
+            this.grpOperaciones.Controls.Add(this.btnEliminar);
+            this.grpOperaciones.Controls.Add(this.btnAceptar);
+            this.grpOperaciones.Controls.Add(this.btnCancelar);
+            this.grpOperaciones.Controls.Add(this.btnSalir);
+            this.grpOperaciones.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.grpOperaciones.Location = new System.Drawing.Point(0, 284);
+            this.grpOperaciones.Name = "grpOperaciones";
+            this.grpOperaciones.Size = new System.Drawing.Size(764, 108);
+            this.grpOperaciones.TabIndex = 35;
+            this.grpOperaciones.TabStop = false;
+            //
+            // grpDatos
+            //
+            this.grpDatos.Controls.Add(this.grpListado);
+            this.grpDatos.Controls.Add(this.grpDetalle);
+            this.grpDatos.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpDatos.Location = new System.Drawing.Point(0, 42);
+            this.grpDatos.Name = "grpDatos";
+            this.grpDatos.Size = new System.Drawing.Size(764, 242);
+            this.grpDatos.TabIndex = 36;
+            this.grpDatos.TabStop = false;
+            //
+            // bindingSource
+            //
+            this.bindingSource.CurrentChanged += new System.EventHandler(this.bindingSource_CurrentChanged);
+            //
+            // lblTitulo
+            //
+            this.lblTitulo.BackColor = System.Drawing.Color.Black;
+            this.lblTitulo.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitulo.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitulo.ForeColor = System.Drawing.Color.White;
+            this.lblTitulo.Location = new System.Drawing.Point(0, 0);
+            this.lblTitulo.Name = "lblTitulo";
+            this.lblTitulo.Size = new System.Drawing.Size(764, 42);
+            this.lblTitulo.TabIndex = 37;
+            this.lblTitulo.Text = "<%=template_target.entity_schema.name%>";
+            this.lblTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+						//
+            // Frm<%=template_target.entity_schema.name%>
+            //
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(764, 392);
+            this.Controls.Add(this.grpDatos);
+            this.Controls.Add(this.grpOperaciones);
+            this.Controls.Add(this.lblTitulo);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(780, 430);
+            this.Name = "Frm<%=template_target.entity_schema.name%>";
+            this.Text = "Edición <%=template_target.entity_schema.name%>";
+            this.Load += new System.EventHandler(this.<%=template_target.class_name%>_Load);
+            this.grpListado.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvListado)).EndInit();
+            this.grpDetalle.ResumeLayout(false);
+            this.pnlDetalle.ResumeLayout(false);
+            this.pnlDetalle.PerformLayout();
+            this.grpOperaciones.ResumeLayout(false);
+            this.grpDatos.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button btnAgregar;
+				<%
+        template_target.entity_schema.fields.each { |field|
+        %>private System.Windows.Forms.Label lbl<%=field.name%>;
+        private System.Windows.Forms.TextBox txt<%=field.name%>;
+        <%}%>
+        private System.Windows.Forms.GroupBox grpListado;
+        private System.Windows.Forms.DataGridView dgvListado;
+        private System.Windows.Forms.GroupBox grpDetalle;
+        private System.Windows.Forms.Panel pnlDetalle;
+        private System.Windows.Forms.ImageList imageList;
+        private System.Windows.Forms.Button btnEditar;
+        private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Button btnAceptar;
+        private System.Windows.Forms.Button btnCancelar;
+        private System.Windows.Forms.Button btnSalir;
+        private System.Windows.Forms.GroupBox grpOperaciones;
+        private System.Windows.Forms.GroupBox grpDatos;
+        private System.Windows.Forms.BindingSource bindingSource;
+        private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.ToolTip toolTip;
+
+
+    }
+}

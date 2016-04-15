@@ -1,0 +1,59 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System.Reflection;
+using System.Runtime.InteropServices;
+
+// General Information about an assembly is controlled through the following
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+
+[assembly: AssemblyTitle("<%=generation_attributes[:assembly_title]%>")]
+[assembly: AssemblyDescription("<%=generation_attributes[:assembly_description]%>")]
+[assembly: AssemblyConfiguration("<%=generation_attributes[:assembly_configuration]%>")]
+[assembly: AssemblyCompany("<%=generation_attributes[:assembly_company]%>")]
+[assembly: AssemblyProduct("<%=generation_attributes[:assembly_product]%>")]
+[assembly: AssemblyCopyright("<%=generation_attributes[:assembly_copyright]%>")]
+[assembly: AssemblyTrademark("<%=generation_attributes[:assembly_trademark]%>")]
+[assembly: AssemblyCulture(<%=generation_attributes[:assembly_culture]%>)]
+
+
+// Setting ComVisible to false makes the types in this assembly not visible
+// to COM components.  If you need to access a type in this assembly from
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
+
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Build and Revision Numbers
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+
+
+[assembly: AssemblyVersion("<%=generation_attributes[:assembly_version]%>")]
+[assembly: AssemblyFileVersion("<%=generation_attributes[:assembly_file_version]%>")]

@@ -1,0 +1,127 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
+
+namespace <%=generation_attributes[:namespace]%>
+{
+		partial class <%=template_target.class_name%>
+		{
+        public <%=template_target.class_name%>()
+        {
+            InitializeComponent();
+            this.Text = String.Format("Acerca de {0}", AssemblyTitle);
+            this.labelProductName.Text = AssemblyProduct;
+            this.labelVersion.Text = String.Format("Versión {0}", AssemblyVersion);
+            this.labelCopyright.Text = AssemblyCopyright;
+            this.labelCompanyName.Text = AssemblyCompany;
+            this.textBoxDescription.Text = AssemblyDescription;
+        }
+
+        #region Descriptores de acceso de atributos de ensamblado
+
+        public virtual string AssemblyTitle
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                if (attributes.Length > 0)
+                {
+                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+                    if (titleAttribute.Title != "")
+                    {
+                        return titleAttribute.Title;
+                    }
+                }
+                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+            }
+        }
+
+        public virtual string AssemblyVersion
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+        }
+
+        public virtual string AssemblyDescription
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyDescriptionAttribute)attributes[0]).Description;
+            }
+        }
+
+        public virtual string AssemblyProduct
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyProductAttribute)attributes[0]).Product;
+            }
+        }
+
+        public virtual string AssemblyCopyright
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+            }
+        }
+
+        public virtual string AssemblyCompany
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyCompanyAttribute)attributes[0]).Company;
+            }
+        }
+        #endregion
+    }
+}

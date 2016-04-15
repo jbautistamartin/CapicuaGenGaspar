@@ -1,0 +1,161 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Windows.Forms;
+<%=get_namespaces_text(:business_interfaces)
+%><%=get_namespaces_text(:business_entities)
+%><%=get_namespaces_text(:catalog)
+%>
+
+namespace <%=generation_attributes[:namespace]%>
+{
+	partial class <%=template_target.class_name%>
+	{
+        #region Constructor
+
+        public <%=template_target.class_name%>()
+        {
+            InitializeComponent();
+        }
+
+        #endregion Constructor
+
+        #region Eventos
+
+        protected virtual void <%=template_target.class_name%>_Load(object sender, EventArgs e)
+        {
+            ConfigurarStatusBar();
+        }
+
+        /// <summary>
+        /// Opción de menú para finalizar aplicación
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void mnuCerrarAplicacion_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        /// <summary>
+        /// Evento generado al cierre del formulario
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void <%=template_target.class_name%>_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.MdiChildren.Length > 0)
+            {
+                if (MessageBox.Show("Tiene ventanas abiertas." + Environment.NewLine + "¿Realmente desea salir?", "Salir...",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        protected virtual void mnuCascada_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.Cascade);
+        }
+
+        protected virtual void mnuOrganizarHorizontal_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileHorizontal);
+        }
+
+        protected virtual void mnuOrganizarVertical_Click(object sender, EventArgs e)
+        {
+            LayoutMdi(MdiLayout.TileVertical);
+        }
+
+        protected virtual void mnuCerrarTodas_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("¿Esta seguro que desea cerrar todas las ventanas?", MsgboxConsts.AVISO, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            {
+                foreach (Form childForm in MdiChildren)
+                {
+                    childForm.Close();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Evento generado al click en acercaDeToolStripMenuItem
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void mnuAcerca_Click(object sender, EventArgs e)
+        {
+            new <%=get_about_class_full_name%>().ShowDialog();
+        }
+
+
+				<%get_entity_catalogs_name do |tabla|%>
+				protected virtual void mnu<%=tabla%>_Click(object sender, EventArgs e)
+        {
+            //Carga el formulario FrmOrders
+            CargarFormulario<<%=tabla%>>();
+        }
+		
+				<%end%>
+
+        #endregion Eventos
+
+        #region Metodos
+        /// <summary>
+        /// Configura la opciones de la estatus BAR
+        /// </summary>
+        protected virtual void ConfigurarStatusBar()
+        {
+            lblFecha.Text = string.Format("FECHA: {0}", DateTime.Now.ToShortDateString());
+        }
+		
+        /// <summary>
+        /// Carga el formulario
+        /// </summary>
+        /// <typeparam name="F">Formulario a cargar</typeparam>
+        protected virtual void CargarFormulario<F>() where F : Form, new()
+        {
+            //Busca si el formulario ya se carga anteriormente
+            foreach (Form form in this.MdiChildren)
+            {
+                if (form.GetType() == typeof(F))
+                {
+                    form.BringToFront();
+                    form.WindowState = FormWindowState.Maximized;
+                    return;
+                }
+            }
+
+            //No existe el formulario, crea uno nuevo
+            Form formNumero = new F();
+            formNumero.MdiParent = this;
+            formNumero.Show();
+            formNumero.WindowState = FormWindowState.Maximized;
+        }
+
+        #endregion
+    }
+}

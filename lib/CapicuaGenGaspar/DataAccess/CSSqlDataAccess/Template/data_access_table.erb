@@ -1,0 +1,298 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Configuration;
+using System.Data;
+using System.Data.Common;
+using System.Text;
+using System.Collections.Generic;
+<%=get_namespaces_text(:business_interfaces) %>
+
+namespace <%=generation_attributes[:namespace]%>
+{
+    /// <summary>
+    /// Capa de acceso a datos de una<%=template_target.class_name%>
+    /// </summary>
+    partial class  <%=template_target.class_name%><T> : AccesoDatos<T> where T : class, <%=get_entity_interface_name(template_target.entity_schema.name)%>, new()
+    {
+
+        #region Sentencias SQL
+        
+        /// <summary>
+        /// Consulta
+        /// </summary>
+        /// <param name="<%=template_target.entity_schema.name.downcase%>">Registro a consultar</param>
+        /// <returns>Registro consultado</returns>
+        public override T Consultar(T <%=template_target.entity_schema.name.downcase%>)
+        {
+           T resultado = ConsultarExiste(<%=template_target.entity_schema.name.downcase%>);
+
+            if (resultado == null)
+            {
+                throw new AccesoDatosException("No existe el registro");
+            }
+            else
+            {
+                return resultado;
+            }
+        }
+
+        /// <summary>
+        /// Lista todos los registros
+        /// </summary>
+        /// <returns>Registros</returns>
+        public override IEnumerable<T> Listar()
+        {
+            List<T> listaResultado = new List<T>();
+
+            StringBuilder query = new StringBuilder();
+
+            query.AppendLine("SELECT");
+            <%
+            total=template_target.entity_schema.fields.count
+            indice=0
+            template_target.entity_schema.fields.each { |field|
+            indice=indice+1
+            %>query.AppendLine("  <%=field.name%><%="," if indice!=total%>");
+            <%}%>query.AppendLine("FROM");
+            query.AppendLine("    <%=template_target.entity_schema.sql_name.downcase%>");
+
+            DbCommand comando = CrearComando(query.ToString());
+
+            using (DbConnection conexion = CrearConexionAbierta())
+            {
+                comando.Connection = conexion;
+                DbDataReader reader = comando.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                       T resultado = new T();
+                        <%
+                        template_target.entity_schema.fields.each { |field|
+                        %> if (reader["<%=field.name%>"] != DBNull.Value) resultado.<%=field.name%> = (<%=field.net_type%>)reader["<%=field.name%>"];
+                        <%}%>
+                        listaResultado.Add(resultado);
+                    }
+                }
+
+            }
+
+            return listaResultado;
+        }
+        
+        /// <summary>
+        /// Consulta si un registro existe
+        /// </summary>
+        /// <param name="<%=template_target.entity_schema.name.downcase%>">Registro a consultar</param>
+        /// <returns>Devuelve el registro o nulo</returns>
+        public override T ConsultarExiste(T <%=template_target.entity_schema.name.downcase%>)
+        {
+            StringBuilder query = new StringBuilder();
+
+            query.AppendLine("SELECT");
+            <%
+            total=template_target.entity_schema.fields.count
+            indice=0
+            template_target.entity_schema.fields.each { |field|
+            indice=indice+1
+            %>query.AppendLine("  <%=field.name%><%="," if indice!=total%>");
+            <%}%>query.AppendLine("FROM");
+            query.AppendLine("    <%=template_target.entity_schema.sql_name.downcase%>");
+            query.AppendLine("WHERE");
+            <%
+            total=template_target.entity_schema.primary_fields.count
+            indice=0
+            template_target.entity_schema.primary_fields.each { |field|
+            indice=indice+1 
+            %>query.AppendLine("<%=field.name%>=@p<%=indice%><%=" AND" if indice!=total%>"); 
+            <%}%>
+
+            DbCommand comando = CrearComando(query.ToString());
+            <%
+            indice=0
+            template_target.entity_schema.primary_fields.each { |field|
+            indice=indice+1
+            %>AgregarParametro(comando, "@p<%=indice%>",<%=field.sql_net_type%>, <%=template_target.entity_schema.name.downcase%>.<%=field.name%>);
+            <%}%>  
+
+
+            using (DbConnection conexion = CrearConexionAbierta())
+            {
+                comando.Connection = conexion;
+                DbDataReader reader = comando.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                       T resultado = new T();
+                        <%
+                        template_target.entity_schema.fields.each { |field|
+                        %> if (reader["<%=field.name%>"] != DBNull.Value) resultado.<%=field.name%> = (<%=field.net_type%>)reader["<%=field.name%>"];
+                        <%}%>
+
+                        return resultado;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Actualización
+        /// </summary>
+        /// <param name="<%=template_target.entity_schema.name.downcase%>">Registro a actualizar</param>
+        public override void Actualizar(T <%=template_target.entity_schema.name.downcase%>)
+        {
+            Consultar(<%=template_target.entity_schema.name.downcase%>);
+
+            StringBuilder query = new StringBuilder();
+            query.AppendLine("UPDATE <%=template_target.entity_schema.sql_name.downcase%>");
+            query.AppendLine("SET");  
+            <% 
+            total=template_target.entity_schema.non_primary_fields.count
+            indice=0
+            template_target.entity_schema.non_primary_fields.each { |field|
+            indice=indice+1
+            %>query.AppendLine("  <%=field.name%>=@p<%=indice%><%="," if indice!=total%>");
+            <%}%>query.AppendLine("WHERE");
+            <%
+            total=indice + template_target.entity_schema.primary_fields.count 
+            template_target.entity_schema.primary_fields.each { |field|
+            indice=indice+1
+            %>query.AppendLine("  <%=field.name%>=@p<%=indice%><%=" AND" if indice!=total%>"); 
+            <%}%>
+            DbCommand comando = CrearComando(query.ToString());
+            <%
+            indice=0
+            template_target.entity_schema.non_primary_fields.each { |field|
+            indice=indice+1
+            %>AgregarParametro(comando, "@p<%=indice%>",<%=field.sql_net_type%>, <%=template_target.entity_schema.name.downcase%>.<%=field.name%>);
+            <%}
+            template_target.entity_schema.primary_fields.each { |field|
+            indice=indice+1
+            %>AgregarParametro(comando, "@p<%=indice%>",<%=field.sql_net_type%>, <%=template_target.entity_schema.name.downcase%>.<%=field.name%>);
+            <%}%>    
+            
+            using (DbConnection conexion = CrearConexionAbierta())
+            {
+                comando.Connection = conexion;
+                comando.ExecuteNonQuery();
+            }
+        }
+
+       
+        
+        /// <summary>
+        /// Inserta un registro
+        /// </summary>
+        /// <param name="<%=template_target.entity_schema.name.downcase%>">Registro para insertar</param>
+        public override void Insertar(T <%=template_target.entity_schema.name.downcase%>)
+        {
+           T registroExistente = ConsultarExiste(<%=template_target.entity_schema.name.downcase%>);
+
+            if (registroExistente != null)
+            {
+                throw new AccesoDatosException("El registro ya existe");
+            }
+
+            StringBuilder query = new StringBuilder();
+            query.AppendLine("INSERT INTO <%=template_target.entity_schema.sql_name.downcase%>");
+            query.AppendLine("(");
+            <%
+            total=template_target.entity_schema.fields.count
+            indice=0
+            template_target.entity_schema.fields.each { |field|
+              indice=indice+1
+            next if field.identity
+            %>query.AppendLine("  <%=field.name%><%="," if indice!=total%>"); 
+            <%}%>query.AppendLine(")");
+            query.AppendLine("VALUES");
+            query.AppendLine("(");
+            <%
+            total=template_target.entity_schema.fields.count
+            indice=0
+            template_target.entity_schema.fields.each { |field|
+            indice=indice+1
+            next if field.identity
+            %>query.AppendLine("  @p<%=indice%><%="," if indice!=total%>"); 
+            <%}%>query.AppendLine(")");
+
+            DbCommand comando = CrearComando(query.ToString());
+            <%
+            indice=0
+            template_target.entity_schema.fields.each { |field|
+            indice=indice+1
+            next if field.identity
+            %>AgregarParametro(comando, "@p<%=indice%>",<%=field.sql_net_type%>, <%=template_target.entity_schema.name.downcase%>.<%=field.name%>);
+            <%}%>  
+
+
+            using (DbConnection conexion = CrearConexionAbierta())
+            {
+                comando.Connection = conexion;
+                comando.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Borrado de registros
+        /// </summary>
+        /// <param name="<%=template_target.entity_schema.name.downcase%>">Registro a eliminar</param>
+        public override void Eliminar(T <%=template_target.entity_schema.name.downcase%>)
+        {
+            Consultar(<%=template_target.entity_schema.name.downcase%>);
+
+            StringBuilder query = new StringBuilder();
+            query.AppendLine("DELETE <%=template_target.entity_schema.sql_name.downcase%>");
+            query.AppendLine("WHERE");
+            <%
+            total=template_target.entity_schema.primary_fields.count
+            indice=0
+            template_target.entity_schema.primary_fields.each { |field|
+            indice=indice+1 
+            %>query.AppendLine("<%=field.name%>=@p<%=indice%><%=" AND" if indice!=total%>"); 
+            <%}%>
+
+            DbCommand comando = CrearComando(query.ToString());
+            <%
+            indice=0
+            template_target.entity_schema.primary_fields.each { |field|
+            indice=indice+1
+            %>AgregarParametro(comando, "@p<%=indice%>",<%=field.sql_net_type%>, <%=template_target.entity_schema.name.downcase%>.<%=field.name%>);
+            <%}%>  
+
+            using (DbConnection conexion = CrearConexionAbierta())
+            {
+                comando.Connection = conexion;
+                comando.ExecuteNonQuery();
+            }
+        }
+
+        #endregion
+    }
+}

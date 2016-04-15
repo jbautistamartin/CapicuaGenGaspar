@@ -1,0 +1,154 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Configuration;
+using System.Data;
+using System.Data.Common;
+using System.Text;
+using System.Collections.Generic;
+
+
+
+namespace  <%=self.generation_attributes[:namespace]%>
+{
+    /// <summary>
+    /// Clase base de acceso a datos
+    /// </summary>
+    abstract partial class AccesoDatos<T>
+    {
+        #region Propiedades
+
+        /// <summary>
+        /// Nombre de la conexión
+        /// </summary>
+        protected const string nombreConexion= <%=get_db_connection_name_method%>;
+
+        /// <summary>
+        /// Fabrica que crea los objetos de acceso a datos
+        /// </summary>
+        protected DbProviderFactory dbProviderFactory;
+
+        #endregion Propiedades
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public AccesoDatos()
+        {
+            dbProviderFactory = <%=get_db_connection_provider_method%>;
+        }
+
+        #endregion Constructor
+
+        #region Sentencias SQL
+
+        /// <summary>
+        /// Listado completo de los registros
+        /// </summary>
+        /// <returns>Listado completo de los registros</returns>
+        public abstract IEnumerable<T> Listar();
+
+
+        /// <summary>
+        /// Consulta
+        /// </summary>
+        /// <param name="registro">Registro a consultar</param>
+        /// <returns>Registro consultado</returns>
+        public abstract T Consultar(T registro);
+
+        /// <summary>
+        /// Consulta si un registro existe
+        /// </summary>
+        /// <param name="registro">Registro a consultar</param>
+        /// <returns>Devuelve el registro o nulo</returns>
+        public abstract T ConsultarExiste(T registro);
+
+        /// <summary>
+        /// Actualización
+        /// </summary>
+        /// <param name="registro">Registro a actualizar</param>
+        public abstract void Actualizar(T registro);
+
+        /// <summary>
+        /// Inserta un registro
+        /// </summary>
+        /// <param name="registro">Registro para insertar</param>
+        public abstract void Insertar(T registro);
+
+        /// <summary>
+        /// Borrado de registros
+        /// </summary>
+        /// <param name="registro">Registro a eliminar</param>
+        public abstract void Eliminar(T registro);
+
+        #endregion Sentencias SQL
+
+        #region funciones para crear comandos
+
+        /// <summary>
+        /// Devuelve una conexión abierta a base de datos
+        /// </summary>
+        /// <returns>Conexión abierta</returns>
+        protected virtual DbConnection CrearConexionAbierta()
+        {
+            DbConnection dbConnection = dbProviderFactory.CreateConnection();
+            dbConnection.ConnectionString = <%=get_db_connection_string_method%>;
+            dbConnection.Open();
+            return dbConnection;
+        }
+
+        /// <summary>
+        /// Crea un comando de texto
+        /// </summary>
+        /// <param name="textoComando">Texto a crear</param>
+        /// <returns>comando</returns>
+        protected virtual DbCommand CrearComando(string textoComando)
+        {
+            DbCommand comando = dbProviderFactory.CreateCommand();
+            comando.CommandType = CommandType.Text;
+            comando.CommandText = textoComando;
+            return comando;
+        }
+
+        /// <summary>
+        /// Agregado un parámetro a un comando
+        /// </summary>
+        /// <param name="comando">Comando</param>
+        /// <param name="nombre">Nombre del parámetro</param>
+        /// <param name="tipoSql">Tipo del parámetro</param>
+        /// <param name="valor">Valor del parámetro</param>
+        protected virtual void AgregarParametro(DbCommand comando, string nombre, DbType tipoSql, object valor)
+        {
+            DbParameter parametro = dbProviderFactory.CreateParameter();
+            parametro.ParameterName = nombre;
+            parametro.DbType = tipoSql;
+            parametro.Value = valor;
+            comando.Parameters.Add(parametro);
+        }
+
+        #endregion funciones para crear comandos
+    }
+}

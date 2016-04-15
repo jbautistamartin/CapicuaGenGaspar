@@ -1,0 +1,316 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>using System;
+using System.Windows.Forms;
+
+
+namespace <%=generation_attributes[:namespace]%>
+{
+	partial class <%=template_target.class_name%> : Form
+	{
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(<%=template_target.class_name%>));
+            this.mnuMenu = new System.Windows.Forms.MenuStrip();
+            this.mnuArchivo = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuSalir = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuCatalogo = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuVentanas = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuCascada = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuOrganizarHorizontal = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuOrganizarVertical = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuCerrarTodas = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAyuda = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAcercaDe = new System.Windows.Forms.ToolStripMenuItem();
+            <%get_entity_catalogs_name { |catalog|%>this.mnu<%=catalog%> =  new System.Windows.Forms.ToolStripMenuItem();
+            <%}%>this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.pnlEncabezado = new System.Windows.Forms.Panel();
+            this.StatusBarMDI = new System.Windows.Forms.StatusStrip();
+            this.lblUsuarioFirmado = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblFecha = new System.Windows.Forms.ToolStripStatusLabel();
+            this.mnuMenu.SuspendLayout();
+            this.StatusBarMDI.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // mnuMenu
+            // 
+            this.mnuMenu.BackColor = System.Drawing.SystemColors.Control;
+            this.mnuMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuArchivo,
+            this.mnuCatalogo,
+            this.mnuVentanas,
+            this.mnuAyuda});
+            this.mnuMenu.Location = new System.Drawing.Point(0, 0);
+            this.mnuMenu.MdiWindowListItem = this.mnuVentanas;
+            this.mnuMenu.Name = "mnuMenu";
+            this.mnuMenu.Size = new System.Drawing.Size(770, 24);
+            this.mnuMenu.TabIndex = 4;
+            this.mnuMenu.Text = "Menu";
+            // 
+            // mnuArchivo
+            // 
+            this.mnuArchivo.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuSalir});
+            this.mnuArchivo.Name = "mnuArchivo";
+            this.mnuArchivo.Size = new System.Drawing.Size(60, 20);
+            this.mnuArchivo.Text = "&Archivo";
+            // 
+            // mnuSalir
+            // 
+            this.mnuSalir.Image = ((System.Drawing.Image)(resources.GetObject("mnuSalir.Image")));
+            this.mnuSalir.Name = "mnuSalir";
+            this.mnuSalir.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.mnuSalir.Size = new System.Drawing.Size(152, 22);
+            this.mnuSalir.Text = "&Salir";
+            this.mnuSalir.Click += new System.EventHandler(this.mnuCerrarAplicacion_Click);
+            // 
+            // mnuCatalogo
+            // 
+            this.mnuCatalogo.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] 
+						{
+						<%get_entity_catalogs_name { |catalog|%> mnu<%=catalog%>,<%}%>
+						});
+            this.mnuCatalogo.Name = "mnuCatalogo";
+            this.mnuCatalogo.Size = new System.Drawing.Size(72, 20);
+            this.mnuCatalogo.Text = "&Catálogos";
+						<%get_entity_catalogs_name { |catalog|
+							entity=get_entity_by_catalog_name(catalog)
+						%>//
+            // mnu<%=catalog%>
+            // 
+						this.mnu<%=catalog%>.Image = ((System.Drawing.Image)(resources.GetObject("mnuCatalogo.Image")));
+            this.mnu<%=catalog%>.Name = "mnu<%=catalog%>";
+            this.mnu<%=catalog%>.Size = new System.Drawing.Size(179, 22);
+            this.mnu<%=catalog%>.Text = "Catálogo de <%=entity.name%>";
+            this.mnu<%=catalog%>.Click += new System.EventHandler(this.mnu<%=catalog%>_Click);
+						<%}%>
+            // 
+            // mnuVentanas
+            // 
+            this.mnuVentanas.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuCascada,
+            this.toolStripMenuItem6,
+            this.mnuOrganizarHorizontal,
+            this.mnuOrganizarVertical,
+            this.toolStripMenuItem7,
+            this.mnuCerrarTodas});
+            this.mnuVentanas.Name = "mnuVentanas";
+            this.mnuVentanas.Size = new System.Drawing.Size(62, 20);
+            this.mnuVentanas.Text = "&Ventana";
+            // 
+            // mnuCascada
+            // 
+            this.mnuCascada.Image = ((System.Drawing.Image)(resources.GetObject("mnuCascada.Image")));
+            this.mnuCascada.Name = "mnuCascada";
+            this.mnuCascada.Size = new System.Drawing.Size(202, 22);
+            this.mnuCascada.Text = "Cascada";
+            this.mnuCascada.Click += new System.EventHandler(this.mnuCascada_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(199, 6);
+            // 
+            // mnuOrganizarHorizontal
+            // 
+            this.mnuOrganizarHorizontal.Image = ((System.Drawing.Image)(resources.GetObject("mnuOrganizarHorizontal.Image")));
+            this.mnuOrganizarHorizontal.Name = "mnuOrganizarHorizontal";
+            this.mnuOrganizarHorizontal.Size = new System.Drawing.Size(202, 22);
+            this.mnuOrganizarHorizontal.Text = "Organización Horizontal";
+            this.mnuOrganizarHorizontal.Click += new System.EventHandler(this.mnuOrganizarHorizontal_Click);
+            // 
+            // mnuOrganizarVertical
+            // 
+            this.mnuOrganizarVertical.Image = ((System.Drawing.Image)(resources.GetObject("mnuOrganizarVertical.Image")));
+            this.mnuOrganizarVertical.Name = "mnuOrganizarVertical";
+            this.mnuOrganizarVertical.Size = new System.Drawing.Size(202, 22);
+            this.mnuOrganizarVertical.Text = "Organización Vertical";
+            this.mnuOrganizarVertical.Click += new System.EventHandler(this.mnuOrganizarVertical_Click);
+            // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(199, 6);
+            // 
+            // mnuCerrarTodas
+            // 
+            this.mnuCerrarTodas.Image = ((System.Drawing.Image)(resources.GetObject("mnuCerrarTodas.Image")));
+            this.mnuCerrarTodas.Name = "mnuCerrarTodas";
+            this.mnuCerrarTodas.Size = new System.Drawing.Size(202, 22);
+            this.mnuCerrarTodas.Text = "Cerrar Todas";
+            this.mnuCerrarTodas.Click += new System.EventHandler(this.mnuCerrarTodas_Click);
+            // 
+            // mnuAyuda
+            // 
+            this.mnuAyuda.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuAcercaDe});
+            this.mnuAyuda.Name = "mnuAyuda";
+            this.mnuAyuda.Size = new System.Drawing.Size(53, 20);
+            this.mnuAyuda.Text = "A&yuda";
+            // 
+            // mnuAcercaDe
+            // 
+            this.mnuAcercaDe.Image = ((System.Drawing.Image)(resources.GetObject("mnuAcercaDe.Image")));
+            this.mnuAcercaDe.Name = "mnuAcercaDe";
+            this.mnuAcercaDe.Size = new System.Drawing.Size(152, 22);
+            this.mnuAcercaDe.Text = "&Acerca de...";
+            this.mnuAcercaDe.Click += new System.EventHandler(this.mnuAcerca_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(6, 6);
+            // 
+            // pnlEncabezado
+            // 
+            this.pnlEncabezado.AutoScroll = true;
+            this.pnlEncabezado.AutoSize = true;
+            this.pnlEncabezado.BackColor = System.Drawing.Color.Gray;
+            this.pnlEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlEncabezado.Location = new System.Drawing.Point(0, 24);
+            this.pnlEncabezado.Name = "pnlEncabezado";
+            this.pnlEncabezado.Size = new System.Drawing.Size(770, 0);
+            this.pnlEncabezado.TabIndex = 0;
+            // 
+            // StatusBarMDI
+            // 
+            this.StatusBarMDI.BackColor = System.Drawing.SystemColors.Control;
+            this.StatusBarMDI.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblUsuarioFirmado,
+            this.toolStripStatusLabel1,
+            this.lblFecha});
+            this.StatusBarMDI.Location = new System.Drawing.Point(0, 465);
+            this.StatusBarMDI.Name = "StatusBarMDI";
+            this.StatusBarMDI.Size = new System.Drawing.Size(770, 22);
+            this.StatusBarMDI.TabIndex = 6;
+            this.StatusBarMDI.Text = "StatusStrip";
+            // 
+            // lblUsuarioFirmado
+            // 
+            this.lblUsuarioFirmado.AutoToolTip = true;
+            this.lblUsuarioFirmado.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.lblUsuarioFirmado.Image = ((System.Drawing.Image)(resources.GetObject("lblUsuarioFirmado.Image")));
+            this.lblUsuarioFirmado.Name = "lblUsuarioFirmado";
+            this.lblUsuarioFirmado.Size = new System.Drawing.Size(90, 17);
+            this.lblUsuarioFirmado.Text = "BIENVENIDO";
+            this.lblUsuarioFirmado.ToolTipText = "BIENVENIDO";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(602, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            this.toolStripStatusLabel1.Text = "  ";
+            // 
+            // lblFecha
+            // 
+            this.lblFecha.AutoToolTip = true;
+            this.lblFecha.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.lblFecha.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
+            this.lblFecha.Image = ((System.Drawing.Image)(resources.GetObject("lblFecha.Image")));
+            this.lblFecha.Name = "lblFecha";
+            this.lblFecha.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblFecha.Size = new System.Drawing.Size(63, 17);
+            this.lblFecha.Text = "FECHA:";
+            this.lblFecha.ToolTipText = "FECHA";
+            // 
+            // <%=template_target.class_name%>
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(770, 487);
+            this.Controls.Add(this.StatusBarMDI);
+            this.Controls.Add(this.pnlEncabezado);
+            this.Controls.Add(this.mnuMenu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.IsMdiContainer = true;
+            this.MainMenuStrip = this.mnuMenu;
+            this.Name = "<%=template_target.class_name%>";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "<%=generation_attributes[:assembly_title]%> - Versión: <%=generation_attributes[:assembly_version]%>";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.<%=template_target.class_name%>_FormClosing);
+            this.Load += new System.EventHandler(this.<%=template_target.class_name%>_Load);
+            this.mnuMenu.ResumeLayout(false);
+            this.mnuMenu.PerformLayout();
+            this.StatusBarMDI.ResumeLayout(false);
+            this.StatusBarMDI.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.MenuStrip mnuMenu;
+        private System.Windows.Forms.ToolStripMenuItem mnuArchivo;
+        private System.Windows.Forms.ToolStripMenuItem mnuSalir;
+        private System.Windows.Forms.ToolStripMenuItem mnuCatalogo;
+        <%get_entity_catalogs_name { |catalog|%>private System.Windows.Forms.ToolStripMenuItem mnu<%=catalog%>;
+        <%}%>private System.Windows.Forms.ToolStripMenuItem mnuAyuda;
+        private System.Windows.Forms.Panel pnlEncabezado;
+        private System.Windows.Forms.StatusStrip StatusBarMDI;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel lblFecha;
+        private System.Windows.Forms.ToolStripMenuItem mnuVentanas;
+        private System.Windows.Forms.ToolStripMenuItem mnuCascada;
+        private System.Windows.Forms.ToolStripMenuItem mnuOrganizarHorizontal;
+        private System.Windows.Forms.ToolStripMenuItem mnuOrganizarVertical;
+        private System.Windows.Forms.ToolStripMenuItem mnuCerrarTodas;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripMenuItem mnuAcercaDe;
+        private System.Windows.Forms.ToolStripStatusLabel lblUsuarioFirmado;
+
+	}
+}

@@ -1,0 +1,54 @@
+<%
+#encoding: UTF-8
+
+=begin
+
+CapicuaGen
+
+CapicuaGen es un software que ayuda a la creación automática de
+sistemas empresariales a través de la definición y ensamblado de
+diversos generadores de características.
+
+El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
+del 2016.
+
+Puede modificar y distribuir este software, según le plazca, y usarlo
+para cualquier fin ya sea comercial, personal, educativo, o de cualquier
+índole, siempre y cuando incluya este mensaje, y se permita acceso el
+código fuente.
+
+Este software es código libre, y se licencia bajo LGPL.
+
+Para más información consultar http://www.gnu.org/licenses/lgpl.html
+=end
+%>Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+<%
+	generator.get_features_in_targets_by_type(:proyect).each do |f|
+		f.get_relative_out_files(:directory_base => File.dirname(out_file), :types => :proyect).each do |p|
+%>Project("<%=self.generation_attributes[:project_guid]%>") = "<%=self.generation_attributes[:namespace]%>", "<%=p%>", "<%=self.generation_attributes[:project_guid]%>"
+<%	end
+	end
+%>EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Debug|x86.ActiveCfg = Debug|x86
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Debug|x86.Build.0 = Debug|x86
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Release|Any CPU.ActiveCfg = Release|x86
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Release|x86.ActiveCfg = Release|x86
+		{54A7A602-C0C7-4F14-8FA0-3D6B2C0889EE}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
