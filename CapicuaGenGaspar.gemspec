@@ -42,7 +42,7 @@ Para más información consultar http://www.gnu.org/licenses/lgpl.html
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
+    spec.metadata['allowed_push_host'] = "https://rubygems.org"
   else
     raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
   end
@@ -55,6 +55,6 @@ Para más información consultar http://www.gnu.org/licenses/lgpl.html
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "rake", "~> 10.0"
 
-  spec.add_runtime_dependency 'CapicuaGen',  '~> 0.0','>=0.0.1'
-  spec.add_runtime_dependency 'CapicuaGenMelchior',  '~> 0.0','>=0.0.1'
+  spec.add_runtime_dependency 'CapicuaGen','>=0.0.1',  '~> 0.0'
+  spec.add_runtime_dependency 'CapicuaGenMelchior','>=0.0.1',  '~> 0.0'
 end
