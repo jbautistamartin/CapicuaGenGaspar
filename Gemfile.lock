@@ -4,21 +4,23 @@ PATH
     CapicuaGenGaspar (0.0.3)
       CapicuaGen (~> 0.0, >= 0.0.1)
       CapicuaGenMelchior (~> 0.0, >= 0.0.1)
+      rchardet (~> 1.6, >= 1.6.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    CapicuaGen (0.0.2)
+    CapicuaGen (0.0.3)
       activesupport (~> 2.3, >= 2.3.18)
       nokogiri (~> 1.6, >= 1.6.7)
       uuidtools (~> 2.1, >= 2.1.5)
-    CapicuaGenMelchior (0.0.2)
+    CapicuaGenMelchior (0.0.3)
       CapicuaGen (~> 0.0, >= 0.0.1)
     activesupport (2.3.18)
     mini_portile2 (2.0.0)
     nokogiri (1.6.7.2-x86-mingw32)
       mini_portile2 (~> 2.0.0.rc2)
     rake (10.4.2)
+    rchardet (1.6.1)
     uuidtools (2.1.5)
 
 PLATFORMS

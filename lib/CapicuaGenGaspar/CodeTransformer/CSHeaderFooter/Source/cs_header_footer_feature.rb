@@ -1,3 +1,4 @@
+# encoding: utf-8
 =begin
 
 CapicuaGen
@@ -19,8 +20,9 @@ Este software es código libre, y se licencia bajo LGPL.
 Para más información consultar http://www.gnu.org/licenses/lgpl.html
 =end
 
+require 'rubygems'
+require 'rchardet'
 require 'active_support/core_ext/object/blank'
-
 
 require_relative '../../../gaspar'
 require_relative '../../../Mixins/cs_db_connection_provider_mixin'
@@ -97,20 +99,56 @@ module CapicuaGen::Gaspar
             Dir.chdir directory_base do
               # Cargo el acrhivo
               file_content= File.read(file)
+              file_content.force_encoding(CharDet.detect(file_content)['encoding'])
             end
 
 
             # Genero los las licencias
-            header= generate_template_target(@header_template_target, binding)
-            return if not header.blank? and file_content.include?(header)
-            footer= generate_template_target(@footer_template_target, binding)
-            return if not footer.blank? and file_content.include?(footer)
+            modified=false
 
-            file_out= "#{header}#{file_content}#{footer}"
-            Dir.chdir directory_base do
-              # Guardo el archivo
-              File.write(file, file_out)
-              message_helper.puts_created_template("header.erb, footer.erb", file, :override)
+            # Limpio file_content para comparciones
+
+            # Genero cabecera
+            header  =generate_template_target(@header_template_target, binding)
+            begin
+              header_check=header.clone
+              header_check.force_encoding(CharDet.detect(file_content)['encoding']) unless header.blank?
+              header_check.blank?
+              header=header_check
+            rescue
+            end
+
+            if header.blank? or file_content.gsub(/\s*/, '').include?(header.gsub(/\s*/, ''))
+              header =''
+            else
+              modified=true
+            end
+
+            # Genero pie
+            footer= generate_template_target(@footer_template_target, binding)
+            begin
+              footer_check=footer.clone
+              footer_check.force_encoding(CharDet.detect(file_content)['encoding']) unless footer.blank?
+              footer_check.blank?
+              footer_check=footer_check
+            rescue
+            end
+
+            if footer.blank? or file_content.gsub(/\s*/, '').include?(footer.gsub(/\s*/, ''))
+              footer =''
+            else
+              modified=true
+            end
+
+            if modified
+              file_out= "#{header}#{file_content}#{footer}"
+              Dir.chdir directory_base do
+                # Guardo el archivo
+                File.write(file, file_out)
+                message_helper.puts_created_template("header.erb, footer.erb", file, :override)
+              end
+            else
+              message_helper.puts_created_template("header.erb, footer.erb", file, :ignore)
             end
           end
 
