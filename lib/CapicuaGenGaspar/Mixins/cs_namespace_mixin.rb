@@ -35,8 +35,8 @@ module CapicuaGen::Gaspar
 
   # Devuelve una coleccion de namespace
   def get_namespaces(target_types= [])
-    get_attributes( :attributes=>:namespace, :target_types=>target_types) do |a,values|
-      values.each {|v| yield v}
+    get_attributes(:attributes => :namespace, :target_types => target_types) do |a, values|
+      values.each { |v| yield v }
     end
   end
 
@@ -50,4 +50,6 @@ module CapicuaGen::Gaspar
     return result;
   end
 end
+
+
 
