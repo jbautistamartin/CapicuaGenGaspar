@@ -31,8 +31,7 @@ module CapicuaGen
 
     # Indica que un archivo fue limpiado (por CodeMaid)
     def puts_code_clean(out_file)
-      result= ''
-      result= "* -> '#{out_file}': Limpiado"
+      result= "*".colorize(:yellow) + " -> '#{out_file}': Modificado"
       puts_message result
     end
 
