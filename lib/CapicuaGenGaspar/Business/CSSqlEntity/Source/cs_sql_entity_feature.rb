@@ -6,12 +6,12 @@ CapicuaGen es un software que ayuda a la creación automática de
 sistemas empresariales a través de la definición y ensamblado de
 diversos generadores de características.
 
-El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
-del 2016.
+El proyecto fue iniciado por José Luis Bautista Martín, el 6 de enero
+de 2016.
 
 Puede modificar y distribuir este software, según le plazca, y usarlo
 para cualquier fin ya sea comercial, personal, educativo, o de cualquier
-índole, siempre y cuando incluya este mensaje, y se permita acceso el
+índole, siempre y cuando incluya este mensaje, y se permita acceso al
 código fuente.
 
 Este software es código libre, y se licencia bajo LGPL.
@@ -26,7 +26,7 @@ require 'CapicuaGenMelchior/Mixins/entity_sql_table_mixin'
 
 module CapicuaGen::Gaspar
 
-  # Caracteristica generadora para crear entidades de negocio
+  # Característica generadora para crear entidades de negocio
   # a traves de entidades extraidas un archivo .sql
   class CSSqlEntityFeature < CapicuaGen::TemplateFeature
     include CapicuaGen
@@ -38,7 +38,7 @@ module CapicuaGen::Gaspar
 
     public
 
-    # Inicializa la caracteristica
+    # Inicializa la característica
     def initialize(values= {})
       super(values)
 
@@ -57,7 +57,7 @@ module CapicuaGen::Gaspar
     # Configura los objetivos de las platillas (despues de establecer el generador)
     def configure_template_targets
 
-      # Busco  las caracteristicas que contiene entidades de SQL para una table
+      # Busco  las características que contiene entidades de SQL para una table
       get_tables do |e|
         set_template_target("table_entity/#{get_entity_name(e.name)}",
                             TemplateTarget.new(
@@ -73,13 +73,13 @@ module CapicuaGen::Gaspar
 
     end
 
-    # Resetea los atributos personalizados de la caracteristica (antes de establecer el generador)
+    # Resetea los atributos personalizados de la característica (antes de establecer el generador)
     def reset_attributes
       self.generation_attributes[:out_dir]  = nil
       self.generation_attributes[:namespace]= nil
     end
 
-    # Configura los atributos personalizados de la caracteristica (antes de establecer el generador)
+    # Configura los atributos personalizados de la característica (antes de establecer el generador)
     def configure_attributes()
       self.generation_attributes[:out_dir]  = "#{self.generation_attributes[:out_dir]}/#{self.generation_attributes[:namespace]}/Entities" unless self.generation_attributes.has_in_self?(:out_dir)
       self.generation_attributes[:namespace]= "#{self.generation_attributes[:namespace]}.Entities" unless self.generation_attributes.has_in_self?(:namespace)

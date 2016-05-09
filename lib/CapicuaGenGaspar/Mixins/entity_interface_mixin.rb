@@ -6,12 +6,12 @@ CapicuaGen es un software que ayuda a la creación automática de
 sistemas empresariales a través de la definición y ensamblado de
 diversos generadores de características.
 
-El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
-del 2016.
+El proyecto fue iniciado por José Luis Bautista Martín, el 6 de enero
+de 2016.
 
 Puede modificar y distribuir este software, según le plazca, y usarlo
 para cualquier fin ya sea comercial, personal, educativo, o de cualquier
-índole, siempre y cuando incluya este mensaje, y se permita acceso el
+índole, siempre y cuando incluya este mensaje, y se permita acceso al
 código fuente.
 
 Este software es código libre, y se licencia bajo LGPL.
@@ -20,7 +20,7 @@ Para más información consultar http://www.gnu.org/licenses/lgpl.html
 =end
 
 =begin
-Este Mixin esta programado para obtener información de las caracteristicas
+Este Mixin esta programado para obtener información de las características
 de proveedoras de interfaces entidades de negocio :business_interfaces
 =end
 
@@ -31,7 +31,7 @@ module CapicuaGen::Gaspar
 
   # Obtiene el nombre de una clase de una interfaz de entidad de negocio
   def get_entity_interface_name(entity_name)
-    # Busco  las caracteristicas que contiene entidades de SQL para una table
+    # Busco  las características que contiene entidades de SQL para una table
     generator.get_features_in_targets_by_type(:business_interfaces).each do |f|
       # Obtengo las entidades
       name= f.get_entity_interface_name(entity_name)
@@ -43,7 +43,7 @@ module CapicuaGen::Gaspar
 
   # Obtiene el nombre completo de una clase de una interfaz de entidad de negocio
   def get_entity_interface_full_name(entity_name)
-    # Busco  las caracteristicas que contiene entidades de SQL para una table
+    # Busco  las características que contiene entidades de SQL para una table
     generator.get_features_in_targets_by_type(:business_interfaces).each do |f|
       # Obtengo las entidades
       name= f.get_entity_interface_full_name(entity_name)
