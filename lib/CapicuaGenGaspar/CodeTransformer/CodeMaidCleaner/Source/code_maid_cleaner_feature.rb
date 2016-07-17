@@ -6,12 +6,12 @@ CapicuaGen es un software que ayuda a la creación automática de
 sistemas empresariales a través de la definición y ensamblado de
 diversos generadores de características.
 
-El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
-del 2016.
+El proyecto fue iniciado por José Luis Bautista Martín, el 6 de enero
+de 2016.
 
 Puede modificar y distribuir este software, según le plazca, y usarlo
 para cualquier fin ya sea comercial, personal, educativo, o de cualquier
-índole, siempre y cuando incluya este mensaje, y se permita acceso el
+índole, siempre y cuando incluya este mensaje, y se permita acceso al
 código fuente.
 
 Este software es código libre, y se licencia bajo LGPL.
@@ -22,8 +22,8 @@ Para más información consultar http://www.gnu.org/licenses/lgpl.html
 
 =begin
   Este clase se comunica con la extensiòn CodeMaid  de Visual Stuido,
-  para formatear y limpiar la salida del codigo fuente
-  para mas informaciòn visistar la pagina del producto
+  para formatear y limpiar la salida del código fuente
+  para mas informaciòn visistar la página del producto
 
   http://www.codemaid.net/
 
@@ -38,7 +38,7 @@ require_relative '../../../Mixins/cs_app_config_mixin'
 
 
 module CapicuaGen::Gaspar
-  # Caracteristica generadora para limpiar y formatear el codigo generado
+  # Característica generadora para limpiar y formatear el código generado
   # a traves de la herramienta CodeMaid (Extesion de Visual Studio)
   class CodeMaidCleanerFeature < CapicuaGen::Feature
     include CapicuaGen
@@ -50,7 +50,7 @@ module CapicuaGen::Gaspar
 
     public
 
-    # Inicializa la caracteristica
+    # Inicializa la característica
     def initialize(values= {})
       super(values)
 
@@ -68,7 +68,7 @@ module CapicuaGen::Gaspar
     end
 
 
-    # Genera las cabeceras y pie de paginas
+    # Genera las cabeceras y pie de páginas
     def generate
       super()
 
@@ -83,7 +83,7 @@ module CapicuaGen::Gaspar
         files         = []
 
 
-        # Recorro todas las caracteristicas
+        # Recorro todas las características
         generator.features.each do |feature|
 
           return unless feature.respond_to?('get_relative_out_files')

@@ -7,12 +7,12 @@ CapicuaGen es un software que ayuda a la creación automática de
 sistemas empresariales a través de la definición y ensamblado de
 diversos generadores de características.
 
-El proyecto fue iniciado por José Luis Bautista Martin, el 6 de enero
-del 2016.
+El proyecto fue iniciado por José Luis Bautista Martín, el 6 de enero
+de 2016.
 
 Puede modificar y distribuir este software, según le plazca, y usarlo
 para cualquier fin ya sea comercial, personal, educativo, o de cualquier
-índole, siempre y cuando incluya este mensaje, y se permita acceso el
+índole, siempre y cuando incluya este mensaje, y se permita acceso al
 código fuente.
 
 Este software es código libre, y se licencia bajo LGPL.
@@ -32,8 +32,8 @@ require_relative '../../../Mixins/entity_sql_table_mixin'
 
 module CapicuaGen::Gaspar
 
-  # Caracteristica generadora de caceberas y pies de pagina
-  # en el codigo fuente generado por otras caracteristicas
+  # Característica generadora de caceberas y pies de página
+  # en el código fuente generado por otras características
   class CSHeaderFooterFeature < CapicuaGen::TemplateFeature
     include CapicuaGen
     include CapicuaGen::Gaspar
@@ -42,7 +42,7 @@ module CapicuaGen::Gaspar
 
     public
 
-    # Inicializa la caracteristica
+    # Inicializa la característica
     def initialize(values= {})
       super(values)
 
@@ -83,73 +83,81 @@ module CapicuaGen::Gaspar
         template_target= get_template_target_by_name('proyect')
 
         directory_base= self.generation_attributes[:out_dir]
-        # Recorro todas las caracteristicas
+        # Recorro todas las características
         generator.features().each do |feature|
           #Obtengo todos los archivos asociados
           feature.get_relative_out_files(:directory_base => directory_base, :types => :proyect_file).each do |unix_path|
-
-            # Nombre del archivo
-            file     = unix_path.gsub(/\//, '\\')
-            file_name= File.basename file
-
-            next unless check_include(file)
-
-            file_content= ''
-
-            Dir.chdir directory_base do
-              # Cargo el acrhivo
-              file_content= File.read(file)
-              file_content.force_encoding(CharDet.detect(file_content)['encoding'])
-            end
-
-
-            # Genero los las licencias
-            modified=false
-
-            # Limpio file_content para comparciones
-
-            # Genero cabecera
-            header  =generate_template_target(@header_template_target, binding)
             begin
-              header_check=header.clone
-              header_check.force_encoding(CharDet.detect(file_content)['encoding']) unless header.blank?
-              header_check.blank?
-              header=header_check
-            rescue
-            end
 
-            if header.blank? or file_content.gsub(/\s*/, '').include?(header.gsub(/\s*/, ''))
-              header =''
-            else
-              modified=true
-            end
+              # Nombre del archivo
+              file     = unix_path.gsub(/\//, '\\')
+              file_name= File.basename file
 
-            # Genero pie
-            footer= generate_template_target(@footer_template_target, binding)
-            begin
-              footer_check=footer.clone
-              footer_check.force_encoding(CharDet.detect(file_content)['encoding']) unless footer.blank?
-              footer_check.blank?
-              footer_check=footer_check
-            rescue
-            end
+              next unless check_include(file)
 
-            if footer.blank? or file_content.gsub(/\s*/, '').include?(footer.gsub(/\s*/, ''))
-              footer =''
-            else
-              modified=true
-            end
+              file_content= ''
 
-            if modified
-              file_out= "#{header}#{file_content}#{footer}"
               Dir.chdir directory_base do
-                # Guardo el archivo
-                File.write(file, file_out)
-                message_helper.puts_created_template("header.erb, footer.erb", file, :override)
+                # Cargo el acrhivo
+                file_content= File.read(file)
+                file_content.force_encoding(CharDet.detect(file_content)['encoding'])
               end
-            else
-              message_helper.puts_created_template("header.erb, footer.erb", file, :ignore)
+
+
+              # Genero los las licencias
+              modified=false
+
+              # Limpio file_content para comparciones
+
+              # Genero cabecera
+              header  =generate_template_target(@header_template_target, binding)
+              begin
+                header_check=header.clone
+                header_check.force_encoding(CharDet.detect(file_content)['encoding']) unless header.blank?
+                header_check.blank?
+                header=header_check
+              rescue
+              end
+
+              if header.blank? or file_content.gsub(/\s*/, '').include?(header.gsub(/\s*/, ''))
+                header =''
+              else
+                modified=true
+              end
+
+              # Genero pie
+              footer= generate_template_target(@footer_template_target, binding)
+              begin
+                footer_check=footer.clone
+                footer_check.force_encoding(CharDet.detect(file_content)['encoding']) unless footer.blank?
+                footer_check.blank?
+                footer_check=footer_check
+              rescue
+              end
+
+              if footer.blank? or file_content.gsub(/\s*/, '').include?(footer.gsub(/\s*/, ''))
+                footer =''
+              else
+                modified=true
+              end
+
+              if modified
+                file_out= "#{header}#{file_content}#{footer}"
+                Dir.chdir directory_base do
+                  # Guardo el archivo
+                  File.write(file, file_out)
+                  message_helper.puts_created_template("header.erb, footer.erb", file, :override)
+                end
+              else
+                message_helper.puts_created_template("header.erb, footer.erb", file, :ignore)
+              end
+
+            rescue => e
+              error_message="Error en #{unix_path}"
+              message_helper.puts_error_message error_message
+              raise e
             end
+            
           end
 
         end
